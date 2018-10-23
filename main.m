@@ -21,8 +21,8 @@ mkdir('cache');
 disp('Loading data...');
 
 % create the labels
-labs = config.labs;
-mask = config.mask;
+labs = fullfile(config.labs, 'parc.nii.gz');
+mask = fullfile(config.labs, 'mask.nii.gz');
 infl = config.infl;
 
 % if these exist?
@@ -30,28 +30,37 @@ do_micro = config.compmicro;
 do_tprof = config.comptprof;
 do_shape = config.compshape;
 
-if (strcmp(do_micro, 'True') || strcmp(do_tprof, 'True'))
-    
-    if (~exist(config.microdat, 'file') || isempty(config.microdat))
-        warning('Microstructure file not found.');
-        do_micro = 'False';
-        do_tprof = 'False';
-    else
-        microdat = niftiRead(config.microdat);
-        microlab = config.microlab;
-        nnodes = config.nnodes;
-    end
-    
-end
+nnodes = config.nnodes;
+microlab = config.microdat;
 
-% create the inflated parcellation
-parc = feInflateLabels(labs, mask, infl, 'vert', './output/labels_dilated.nii.gz');
+if (do_micro || do_tprof)
+    
+    switch config.microdat
+        case 'fa'
+            microdat = niftiRead(config.fa);
+        case 'md'
+            microdat = niftiRead(config.md);
+        case 'ad'
+            microdat = niftiRead(config.ad);
+        case 'rd'
+            microdat = niftiRead(config.rd);
+        otherwise
+            microdat = [];
+            microlab = 'none';
+            do_micro = 'False';
+            do_tprof = 'False';
+    end
+
+end
 
 % import streamlines
 fg = dtiImportFibersMrtrix(config.fibers, .5);
 
 % grab length
 fascicle_length = fefgGet(fg, 'length');
+
+% create the inflated parcellation
+parc = feInflateLabels(labs, mask, infl, 'vert', './output/labels_dilated.nii.gz');
 
 %% start parallel pool
 
@@ -98,7 +107,7 @@ end
 %% central tendency of microstructure
 
 % if microstructure central tendency is requested
-if strcmp(do_micro, 'True')
+if do_micro
     
     disp([ 'Computing central tendency of edge ' microlab '...' ]);
     
@@ -111,7 +120,7 @@ end
 %% tract profiles
 
 % if tract profiles are requested
-if strcmp(do_tprof, 'True')
+if do_tprof
     
     disp([ 'Computing tract profiles of edge ' microlab '...' ]);
     
@@ -126,7 +135,7 @@ end
 %% tract curves
 
 % if tract curvatures are requested
-if strcmp(do_shape, 'True')
+if do_shape
     
     disp('Computing curvature and torsion of edge...');
     
@@ -167,18 +176,18 @@ dlmwrite('./output/length.csv', omat(:,:,3), ',');
 dlmwrite('./output/denlen.csv', omat(:,:,4), ',');
 
 % save microstructure mats if they're made
-if strcmp(do_micro, 'True')
+if do_micro
     dlmwrite([ './output/' microlab '_mean.csv' ], omat(:,:,5), ',');
     dlmwrite([ './output/' microlab '_std.csv' ], omat(:,:,6), ',');
 end
 
 % save tract profiles if they're made
-if strcmp(do_tprof, 'True')
+if do_tprof
     dlmwrite([ './output/' microlab '_tp.csv' ], tpmat, ',');
 end
 
 % save curves if they're made
-if strcmp(do_shape, 'True')
+if do_shape
     dlmwrite('./output/curv.csv', cvmat, ',');
     dlmwrite('./output/tors.csv', trmat, ',');
 end
