@@ -3,3 +3,5 @@ config.json
 cache
 compiled
 output
+jobid
+_main
