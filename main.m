@@ -104,6 +104,8 @@ for ii = 1:size(rois)
     centers(ii, 3) = rois{ii}.centroid.acpc(3);
 end
 
+clear ii 
+
 %% central tendency of microstructure
 
 % if microstructure central tendency is requested
