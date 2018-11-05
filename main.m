@@ -82,6 +82,9 @@ OK = mkdir(tmpdir);
 if OK
     % set local storage for parpool
     clust.JobStorageLocation = tmpdir;
+    disp(['Cluster Job Storage Location set to: ' clust.JobStorageLocation]);
+else
+    warning('Cluster Job Storage Location was unset. The default may cause failuers.');
 end
 
 % start parpool - close parpool at end of fxn
