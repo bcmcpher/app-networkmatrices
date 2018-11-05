@@ -5,7 +5,16 @@
 hostname
 date
 
-time singularity exec -e docker://brainlife/mcr:neurodebian1604-r2017a ./compiled/main
+#time singularity exec -e docker://brainlife/mcr:neurodebian1604-r2017a ./compiled/main
+
+for i in $(seq 1 5); 
+do 
+	echo "try $i of 5"
+	time singularity exec docker://brainlife/mcr:neurodebian1604-r2017a ./compiled/main && break
+	echo "failed... may retry"
+	sleep 15
+done
+
 echo "Network Pipeline Complete"
 if [ ! -s output/pconn.mat ];
 then
