@@ -22,7 +22,7 @@ disp('Loading data...');
 
 % create the labels
 labs = fullfile(config.labs, 'parc.nii.gz');
-mask = fullfile(config.labs, 'mask.nii.gz');
+mask = fullfile(config.mask, 'mask.nii.gz');
 infl = config.infl;
 
 % if these exist?
