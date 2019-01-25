@@ -21,7 +21,7 @@ mkdir('cache');
 disp('Loading data...');
 
 % create the labels
-labs = fullfile(config.labs, 'parc.nii.gz');
+labs = fullfile(config.parc, 'parc.nii.gz');
 mask = fullfile(config.mask, 'mask.nii.gz');
 infl = config.infl;
 
