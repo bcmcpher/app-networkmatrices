@@ -21,8 +21,8 @@ mkdir('cache');
 disp('Loading data...');
 
 % create the labels
-labs = fullfile(config.parc, 'parc.nii.gz');
-mask = fullfile(config.mask, 'mask.nii.gz');
+labs = config.parc;
+mask = config.mask;
 infl = config.infl;
 
 % if these exist?
