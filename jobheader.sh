@@ -4,7 +4,7 @@ if [ "$(jq .comptprof -r config.json)" == "true" ]; then
     mem=64gb
     walltime=01:00:00
 else
-    mem=16gb
+    mem=24gb
     walltime=00:40:00
 fi
 
