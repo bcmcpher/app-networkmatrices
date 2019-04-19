@@ -160,6 +160,18 @@ disp('Creating connectivity matrices...');
 % create the connectivty matrices
 [ omat, olab ] = feCreateAdjacencyMatrices(pconn, 'all');
 
+%% run network statistics
+
+disp('Computing network statistics...');
+
+% for every matrix computed
+for ii = 1:size(omat, 3)
+    
+    % compute a bunch of numbers
+    [ stats.(olab{ii}).glob, stats.(olab{ii}).node, stats.(olab{ii}).nets ] = fnNetworkStats(omat(:,:,ii));
+    
+end
+
 %% save and exit
 
 % remove parallel pool
@@ -195,4 +207,15 @@ end
 if do_shape
     dlmwrite('./output/curv.csv', cvmat, ',');
     dlmwrite('./output/tors.csv', trmat, ',');
+end
+
+% save all the network stats
+opt.filename = "./output/stats.json";
+opt.ArrayIndent = 1;
+opt.ArrayToStruct = 0;
+opt.SingleArray = 0;
+opt.SingletCell = 0;
+opt.Compact = 1;
+savejson('stats', stats, opt);
+
 end
