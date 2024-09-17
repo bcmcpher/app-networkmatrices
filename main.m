@@ -63,34 +63,33 @@ fascicle_length = fefgGet(fg, 'length');
 parc = feInflateLabels(labs, mask, infl, 'vert', './output/labels_dilated.nii.gz');
 
 %% start parallel pool
-
-disp(['Opening parallel pool with ', num2str(nclust), ' cores...']);
-
+% disp(['Opening parallel pool with ', num2str(nclust), ' cores...']);
+%
 % create parallel cluster object
-clust = parcluster;
-
+%clust = parcluster;
+%
 % set number of cores from arguments
-clust.NumWorkers = nclust;
-
+%clust.NumWorkers = nclust;
+%
 % set temporary cache directory
-tmpdir = tempname('cache');
+%tmpdir = tempname('cache');
 
 % make cache dir
-OK = mkdir(tmpdir);
-
+%OK = mkdir(tmpdir);
+%
 % check and set cachedir location
-if OK
-    % set local storage for parpool
-    clust.JobStorageLocation = tmpdir;
-    disp(['Cluster Job Storage Location set to: ' clust.JobStorageLocation]);
-else
-    warning('Cluster Job Storage Location was unset. The default may cause failuers.');
-end
-
+%if OK
+%    % set local storage for parpool
+%    clust.JobStorageLocation = tmpdir;
+%    disp(['Cluster Job Storage Location set to: ' clust.JobStorageLocation]);
+%else
+%    warning('Cluster Job Storage Location was unset. The default may cause failuers.');
+%end
+%
 % start parpool - close parpool at end of fxn
-pool = parpool(clust, nclust, 'IdleTimeout', 120);
-
-clear tmpdir OK
+%pool = parpool(clust, nclust, 'IdleTimeout', 120);
+%
+%clear tmpdir OK
 
 %% create the inputs
 
@@ -175,7 +174,7 @@ end
 %% save and exit
 
 % remove parallel pool
-delete(pool);
+% delete(pool);
 
 disp('Saving outputs...');
 
