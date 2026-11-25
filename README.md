@@ -3,6 +3,53 @@
 
 # app-networkmatrices
 
+<!-- brainlife-app:begin (generated from the App manifest; edit the manifest, not this block) -->
+
+> **Builds structural network adjacency matrices (streamline count, density, length and optional tensor-based edge weights and tract profiles) from a tractogram and a volumetric parcellation with the FiNE MATLAB tool.**
+
+Dilates the parcellation labels into white matter within the brain mask, assigns streamlines to node pairs and writes adjacency matrices of streamline count, density, length and length-corrected density, plus network statistics. Optionally adds mean/std FA, MD, AD or RD per edge, tract profiles along edges, and edge curvature and torsion. Use it to build connectomes for network analysis; tract profiles need more memory and runtime. Tractogram, parcellation, mask and tensor maps must be in the same space.
+
+| | |
+|---|---|
+| 📥 **Inputs** | `neuro/parcellation/volume` · `neuro/track/tck` · `neuro/tensor` (optional) · `neuro/mask` |
+| 📤 **Outputs** | `raw` |
+| 🐳 **Container** | `brainlife/mcr:neurodebian1604-r2017a` |
+| 🔗 **Run it** | [doi.org/10.25663/brainlife.app.121](https://doi.org/10.25663/brainlife.app.121) |
+
+#### 📥 Inputs
+
+| Input | Datatype | Required | Description |
+|---|---|---|---|
+| `1` | `neuro/parcellation/volume` | yes | The nodes to build the networks |
+| `2` | `neuro/track/tck` | yes | The streamlines to create the edges |
+| `3` | `neuro/tensor` | no | You can request average microstructure properties (FA/MD/AD/RD) or tract profiles for edge weights. |
+| `mask` | `neuro/mask` | yes | Brain mask used to inflate the label slightly into the white matter so that we can capture more fibers that don't quite enter the gray matter volume. You can feed the mask output from Multi-atlas transfer tool App, or run FSL Brain extraction App. The mask should not include the ventricle. |
+
+#### 📤 Outputs
+
+| Output | Datatype | Description |
+|---|---|---|
+| `1` | `raw` | Directory of CSV adjacency matrices (count, density, length, denlen, optional *_mean/*_std), optional tract profiles (*_tp.csv, curv.csv, tors.csv), node centres, network stats.json and MATLAB .mat objects of edges, ROIs and matrices. |
+
+<details>
+<summary><b>⚙️ Parameters</b> (6)</summary>
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `infl` | number | `2` | The number of voxels to dilate the labels into white matter. |
+| `microdat` | enum |  | Optionally select which microstructure measure to summarize Options: `fa`, `md`, `ad`, `rd`. |
+| `compshape` | boolean | `false` | Compute curvature and torsion of edges |
+| `compmicro` | boolean | `false` | Compute mean / std of optional tensor property |
+| `comptprof` | boolean | `false` | Compute tract profile of optional tensor property (requires more memory and runtime) |
+| `nnodes` | number | `100` | The number of points to re-sample to for computing edge curves and tract profiles |
+
+</details>
+
+📚 **References used by this App:**
+- Avesani P, McPherson B, Hayashi S, et al. The open diffusion data derivatives, brain data upcycling via integrated publishing of derivatives and reproducible open cloud services. Sci Data 6, 69 (2019). [doi:10.1038/s41597-019-0073-y](https://doi.org/10.1038/s41597-019-0073-y)
+
+<!-- brainlife-app:end -->
+
 This uses the FiNE MATLAB tool (release pending) to construct structural networks from a tractogram and a labeled anatomical volume. It will output multiple adjacency matrices based on user requested inputs. It will also produce edge-wise profiles of shape and microstructure properties (also based on user request). The initial version of a LiFE-less network tool.
 
 This will be extended output .json-graph data and other types of networks as the projects around FiNE are finished and published.
