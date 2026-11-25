@@ -1,7 +1,15 @@
-[![Abcdspec-compliant](https://img.shields.io/badge/ABCD_Spec-v1.1-green.svg)](https://github.com/brain-life/abcd-spec)
-[![Run on Brainlife.io](https://img.shields.io/badge/Brainlife-bl.app.121-blue.svg)](https://doi.org/10.25663/brainlife.app.121)
+<h1 align="center">Network Matrices</h1>
 
-# app-networkmatrices
+<p align="center">
+  Builds structural network adjacency matrices (streamline count, density, length and optional tensor-based edge weights and tract profiles) from a tractogram and a volumetric parcellation with the FiNE MATLAB tool.
+</p>
+
+<p align="center">
+  <a href="https://github.com/brainlife/abcd-spec"><img src="https://img.shields.io/badge/ABCD_Spec-v1.1-green.svg" alt="ABCD Spec v1.1"></a>
+  <a href="https://doi.org/10.25663/brainlife.app.121"><img src="https://img.shields.io/badge/Brainlife-brainlife.app.121-blue.svg" alt="Run on brainlife.io"></a>
+</p>
+
+## At a glance
 
 <!-- brainlife-app:begin (generated from the App manifest; edit the manifest, not this block) -->
 
@@ -11,12 +19,12 @@ Dilates the parcellation labels into white matter within the brain mask, assigns
 
 | | |
 |---|---|
-| 📥 **Inputs** | `neuro/parcellation/volume` · `neuro/track/tck` · `neuro/tensor` (optional) · `neuro/mask` |
-| 📤 **Outputs** | `raw` |
-| 🐳 **Container** | `brainlife/mcr:neurodebian1604-r2017a` |
-| 🔗 **Run it** | [doi.org/10.25663/brainlife.app.121](https://doi.org/10.25663/brainlife.app.121) |
+| **Inputs** | `neuro/parcellation/volume` · `neuro/track/tck` · `neuro/tensor` (optional) · `neuro/mask` |
+| **Outputs** | `raw` |
+| **Container** | `brainlife/mcr:neurodebian1604-r2017a` |
+| **Run it** | [doi.org/10.25663/brainlife.app.121](https://doi.org/10.25663/brainlife.app.121) |
 
-#### 📥 Inputs
+#### Inputs
 
 | Input | Datatype | Required | Description |
 |---|---|---|---|
@@ -25,14 +33,14 @@ Dilates the parcellation labels into white matter within the brain mask, assigns
 | `3` | `neuro/tensor` | no | You can request average microstructure properties (FA/MD/AD/RD) or tract profiles for edge weights. |
 | `mask` | `neuro/mask` | yes | Brain mask used to inflate the label slightly into the white matter so that we can capture more fibers that don't quite enter the gray matter volume. You can feed the mask output from Multi-atlas transfer tool App, or run FSL Brain extraction App. The mask should not include the ventricle. |
 
-#### 📤 Outputs
+#### Outputs
 
 | Output | Datatype | Description |
 |---|---|---|
 | `1` | `raw` | Directory of CSV adjacency matrices (count, density, length, denlen, optional *_mean/*_std), optional tract profiles (*_tp.csv, curv.csv, tors.csv), node centres, network stats.json and MATLAB .mat objects of edges, ROIs and matrices. |
 
 <details>
-<summary><b>⚙️ Parameters</b> (6)</summary>
+<summary><b>Parameters</b> (6)</summary>
 
 | Parameter | Type | Default | Description |
 |---|---|---|---|
@@ -45,71 +53,49 @@ Dilates the parcellation labels into white matter within the brain mask, assigns
 
 </details>
 
-📚 **References used by this App:**
-- Avesani P, McPherson B, Hayashi S, et al. The open diffusion data derivatives, brain data upcycling via integrated publishing of derivatives and reproducible open cloud services. Sci Data 6, 69 (2019). [doi:10.1038/s41597-019-0073-y](https://doi.org/10.1038/s41597-019-0073-y)
-
 <!-- brainlife-app:end -->
 
-This uses the FiNE MATLAB tool (release pending) to construct structural networks from a tractogram and a labeled anatomical volume. It will output multiple adjacency matrices based on user requested inputs. It will also produce edge-wise profiles of shape and microstructure properties (also based on user request). The initial version of a LiFE-less network tool.
+## Running the App
 
-This will be extended output .json-graph data and other types of networks as the projects around FiNE are finished and published.
+### On brainlife.io
 
-The inputs are a processessed tractogram and a parcellation object.
+Open the App at [doi.org/10.25663/brainlife.app.121](https://doi.org/10.25663/brainlife.app.121), choose `neuro/parcellation/volume`, `neuro/track/tck`, `neuro/tensor`, `neuro/mask` from your project, set the parameters and press **Execute**. The results are saved to your project as `raw`.
 
-The outputs are a series of network adjacency matrices (will be extended to .json-graph and other network file types.
+### Locally
 
-### Authors
-- [Brent McPherson](bcmcpher@iu.edu)
+You need [Singularity/Apptainer](https://apptainer.org/) (the App runs in `brainlife/mcr:neurodebian1604-r2017a`), [`jq`](https://jqlang.github.io/jq/).
 
-### Contributors
-- [Soichi Hayashi](hayashis@iu.edu)
+1. Clone this repository.
+2. Create `config.json` with the paths to your inputs and the parameters:
 
-### Funding Acknowledgement
-brainlife.io is publicly funded and for the sustainability of the project it is helpful to Acknowledge the use of the platform. We kindly ask that you acknowledge the funding below in your publications and code reusing this code.
+   ```json
+   {
+       "parc": "/path/to/1/parc",
+       "key": "/path/to/1/key",
+       "fibers": "/path/to/2/fibers",
+       "fa": "/path/to/3/fa",
+       "md": "/path/to/3/md",
+       "rd": "/path/to/3/rd",
+       "ad": "/path/to/3/ad",
+       "mask": "/path/to/mask/mask",
+       "infl": 2,
+       "microdat": "",
+       "compshape": false,
+       "compmicro": false,
+       "comptprof": false,
+       "nnodes": 100
+   }
+   ```
 
-[![NSF-BCS-1734853](https://img.shields.io/badge/NSF_BCS-1734853-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1734853)
-[![NSF-BCS-1636893](https://img.shields.io/badge/NSF_BCS-1636893-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1636893)
-[![NSF-ACI-1916518](https://img.shields.io/badge/NSF_ACI-1916518-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1916518)
-[![NSF-IIS-1912270](https://img.shields.io/badge/NSF_IIS-1912270-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1912270)
-[![NIH-NIBIB-R01EB029272](https://img.shields.io/badge/NIH_NIBIB-R01EB029272-green.svg)](https://grantome.com/grant/NIH/R01-EB029272-01)
-[![NIH-NIBIB-2T32MH103213-06](https://img.shields.io/badge/NIH_NIBIB-2T32MH103213-06-green.svg)](https://grantome.com/grant/NIH/T32-MH103213-06)
+3. Run `./main`.
 
-### Citations
-We kindly ask that you cite the following articles when publishing papers and code using this code. 
+## Troubleshooting
 
-1. Avesani, P., McPherson, B., Hayashi, S. et al. The open diffusion data derivatives, brain data upcycling via integrated publishing of derivatives and reproducible open cloud services. Sci Data 6, 69 (2019). [https://doi.org/10.1038/s41597-019-0073-y](https://doi.org/10.1038/s41597-019-0073-y)
+- **output missing**: The network build did not produce pconn.mat; check the inputs and, for tract profiles, the memory available.
 
-#### MIT Copyright (c) 2020 Brent McPherson, brainlife.io, Indiana University, and The University of Texas at Austin
+## Sample Datasets
 
-## Running the App 
-
-### On Brainlife.io
-
-You can submit this App online at [https://doi.org/10.25663/bl.app.1](https://doi.org/10.25663/bl.app.1) via the "Execute" tab.
-
-### Running Locally (on your machine)
-
-1. git clone this repo.
-2. Inside the cloned directory, create `config.json` with something like the following content with paths to your input files.
-
-```json
-{
-	"parc": "./input/parc.nii.gz",
-	"track": "./input/track.tck",
-	"tensor": "./input/tensor/",
-	"mask": "./input/mask.nii.gz"
-}
-```
-
-3. Launch the App by executing `main`
-
-```bash
-./main
-```
-
-### Sample Datasets
-
-If you don't have your own input file, you can download sample datasets from Brainlife.io, or you can use [Brainlife CLI](https://github.com/brain-life/cli).
+If you don't have your own input file, you can download sample datasets from Brainlife.io, or you can use [Brainlife CLI](https://github.com/brainlife/cli).
 
 ```
 npm install -g brainlife
@@ -119,47 +105,37 @@ bl dataset download 5a0e604116e499548135de87 && mv 5a0e604116e499548135de87 inpu
 bl dataset download 5a0dcb1216e499548135dd27 && mv 5a0dcb1216e499548135dd27 input/track
 ```
 
-## Output
+## Citing
 
-All output files will be generated under the current working directory (pwd). The main output of this App is a folder called `output`. This file contains following object.
+If you use this App, please cite it, the software it builds on and brainlife.io:
 
-```
-output:
+- Network Matrices. brainlife.io App. [doi:10.25663/brainlife.app.121](https://doi.org/10.25663/brainlife.app.121)
+- Hayashi S, Caron BA, Heinsfeld AS, et al. brainlife.io: a decentralized and open-source cloud platform to support neuroscience research. *Nature Methods* 21:809–813 (2024). [doi:10.1038/s41592-024-02237-2](https://doi.org/10.1038/s41592-024-02237-2)
+- Avesani P, McPherson B, Hayashi S, et al. The open diffusion data derivatives, brain data upcycling via integrated publishing of derivatives and reproducible open cloud services. *Scientific Data* 6:69 (2019). [doi:10.1038/s41597-019-0073-y](https://doi.org/10.1038/s41597-019-0073-y)
 
-	count.csv   - adjacency matrix file of streamline counts
-	density.csv - adjacency matrix file of streamline density
-	length.csv  - adjacency matrix file of streamline length
-	denlen.csv  - adjacency matrix file of streamline density corrected for length
+## Authors
 
-	*_mean.csv  - adjacency matrix file of average microstructure property	
-	*_std.csv   - adjacency matrix file of standard deviation of microstructure property
+- Brent McPherson
 
-	stats.json  - a series of network statistics estimated on the networks without thresholding.
+**Contributors**
 
-	*_tp.csv    - a list of tract profiles (rows) of requested nodes (columns) of the requested microstructure for every edge that exists.
-	curv.csv    - a list of tract profiles (rows) of requested nodes (columns) of the tract curvature for every edge that exists.
-	tors.csv    - a list of tract profiles (rows) of requested nodes (columns) of the tract torsion for every edge that exists.
+- Soichi Hayashi
 
-	centers.csv - a list of node centers in real world (X,Y,Z) mm coordinates	
+## Funding
 
-	pconn.mat - MATLAB object containing connection (edge) data - for debugging / advanced offline work
-	rois.mat  - MATLAB object containing ROI (node) data - for debugging / advanced offline work
-	omat.mat  - MATLAB object containing matrix data - for debugging / advanced offline wor
-	olab.mat  - MATLAB object containing label data - for debugging / advanced offline work
+[![Wellcome-226486/Z/22/Z](https://img.shields.io/badge/Wellcome-226486%2FZ%2F22%2FZ-purple.svg)](https://wellcome.org/)
+[![NIH-NINDS-U24NS140384](https://img.shields.io/badge/NIH_NINDS-U24NS140384-green.svg)](https://reporter.nih.gov/project-details/11261037)
+[![NIH-NINDS-UM1NS132207](https://img.shields.io/badge/NIH_NINDS-UM1NS132207-green.svg)](https://reporter.nih.gov/project-details/11411328)
+[![NIH-NIBIB-R01EB029272](https://img.shields.io/badge/NIH_NIBIB-R01EB029272-green.svg)](https://reporter.nih.gov/project-details/10262925)
+[![NIH-NIBIB-R01EB030896](https://img.shields.io/badge/NIH_NIBIB-R01EB030896-green.svg)](https://reporter.nih.gov/project-details/10428625)
+[![NIH-NIMH-R01MH126699](https://img.shields.io/badge/NIH_NIMH-R01MH126699-green.svg)](https://reporter.nih.gov/project-details/10460628)
+[![NIH-NIDCD-R01DC020088](https://img.shields.io/badge/NIH_NIDCD-R01DC020088-green.svg)](https://reporter.nih.gov/project-details/11140284)
+[![NSF-BCS-1734853](https://img.shields.io/badge/NSF_BCS-1734853-blue.svg)](https://www.nsf.gov/awardsearch/showAward?AWD_ID=1734853)
+[![NSF-BCS-2203524](https://img.shields.io/badge/NSF_BCS-2203524-blue.svg)](https://www.nsf.gov/awardsearch/showAward?AWD_ID=2203524)
+[![NSF-IIS-1636893](https://img.shields.io/badge/NSF_IIS-1636893-blue.svg)](https://www.nsf.gov/awardsearch/showAward?AWD_ID=1636893)
+[![NSF-OAC-2148729](https://img.shields.io/badge/NSF_OAC-2148729-blue.svg)](https://www.nsf.gov/awardsearch/showAward?AWD_ID=2148729)
+[![NSF-IIS-1912270](https://img.shields.io/badge/NSF_IIS-1912270-blue.svg)](https://www.nsf.gov/awardsearch/showAward?AWD_ID=1912270)
+[![NSF-IIS-2148700](https://img.shields.io/badge/NSF_IIS-2148700-blue.svg)](https://www.nsf.gov/awardsearch/showAward?AWD_ID=2148700)
+[![NSF-OAC-1916518](https://img.shields.io/badge/NSF_OAC-1916518-blue.svg)](https://www.nsf.gov/awardsearch/showAward?AWD_ID=1916518)
 
-```
-
-#### Product.json
-
-The secondary output of this app is `product.json`. This file allows web interfaces, DB and API calls on the results of the processing. 
-
-### Dependencies
-
-This App only requires [singularity](https://www.sylabs.io/singularity/) to run. If you don't have singularity, you will need to install following dependencies.  
-
-  - Matlab: https://www.mathworks.com/products/matlab.html
-  - FiNE: TBA    
-  - jsonlab: https://www.mathworks.com/matlabcentral/fileexchange/33381-jsonlab-a-toolbox-to-encode-decode-json-files
-  - VISTASOFT: https://github.com/vistalab/vistasoft/
-
-#### MIT Copyright (c) 2020 Brent McPherson, brainlife.io, Indiana University, and The University of Texas at Austin 
+<sub>brainlife.io, which runs this App, is publicly funded by Wellcome, the U.S. National Institutes of Health and the U.S. National Science Foundation; acknowledging that support helps keep it running.</sub>
